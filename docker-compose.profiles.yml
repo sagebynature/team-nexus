@@ -57,7 +57,12 @@ services:
       AGENT_ROLE: Mission orchestrator and Discord CLI
     ports:
       - "${TEAM_NEXUS_BIND_ADDRESS:-127.0.0.1}:${ATLAS_GATEWAY_PORT:-8642}:8642"
-    command: ["gateway", "run"]
+    # Run the gateway as this Compose service's foreground workload. The upstream
+    # s6 image redirects bare `gateway run` into profile-gateway supervision by
+    # default; Team Nexus already models Atlas as a dedicated Compose service with
+    # HERMES_HOME pointing at the rendered Atlas profile, so opt out of that
+    # redirect to avoid looking for a nested gateway-atlas service.
+    command: ["gateway", "run", "--no-supervise"]
 
   dashboard:
     <<: *profile-runtime

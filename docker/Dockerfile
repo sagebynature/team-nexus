@@ -115,9 +115,17 @@ RUN if [ -d /opt/hermes/tinker-atropos ]; then \
     fi \
     && rm -rf /root/.cache/uv /tmp/uv-cache
 
-COPY docker/team-nexus-entrypoint.sh /usr/local/bin/team-nexus-entrypoint.sh
-RUN chmod +x /usr/local/bin/team-nexus-entrypoint.sh
+COPY docker/team-nexus-cont-init.sh /etc/cont-init.d/016-team-nexus-setup
+RUN chmod +x /etc/cont-init.d/016-team-nexus-setup \
+    # Team Nexus uses one Compose service per long-running function and shares
+    # the rendered Atlas HERMES_HOME across atlas-gateway/dashboard/notifier.
+    # The upstream per-profile s6 gateway reconciler would register
+    # gateway-default in every service container and make all of them contend for
+    # the same /opt/data/profiles/atlas/logs/gateways/default s6-log lock.
+    && rm -f /etc/cont-init.d/02-reconcile-profiles
 
-ENTRYPOINT ["/usr/bin/tini", "-g", "--", "/usr/local/bin/team-nexus-entrypoint.sh"]
+# Upstream Hermes now uses s6-overlay. Do not wrap or replace its deprecated
+# docker/entrypoint.sh shim; route Compose commands through the s6 main wrapper.
+ENTRYPOINT ["/init", "/opt/hermes/docker/main-wrapper.sh"]
 
 WORKDIR /workspace
