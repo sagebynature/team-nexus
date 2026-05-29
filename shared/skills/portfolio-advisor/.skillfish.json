@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "portfolio-advisor",
+  "owner": "ai-align",
+  "repo": "finance-plugin",
+  "path": "skills/portfolio-advisor",
+  "branch": "main",
+  "sha": "c48e6cf40e2547a4656b78a06b25de78876cd075",
+  "source": "manual"
+}

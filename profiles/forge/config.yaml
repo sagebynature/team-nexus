@@ -2,9 +2,9 @@
 # Mounted into the Docker container at /opt/data/config.yaml.
 
 model:
-  provider: openrouter
-  default: google/gemma-4-31b-it
-  context_length: 260000
+  default: gpt-5.5
+  provider: openai-codex
+  base_url: https://chatgpt.com/backend-api/codex
 
 # Keep the default Hermes CLI toolset and opt into Kanban tools.
 # Kanban tool handlers are runtime-gated by Hermes: they appear for
